@@ -1,5 +1,6 @@
 import random
 from matplotlib import pyplot as plt
+import timeit as tit
 
 """
 This Module implements solution for the knapsak problem in the three most basic methods
@@ -32,7 +33,6 @@ def PiWi(n, c, pi, wi):
   for i in range(n):
     pi_div_wi.append((pi[i]/wi[i], pi[i], wi[i]))
   pi_div_wi.sort(reverse=True)
-  print(pi_div_wi)
   sum = 0
   for i in range(n):
     if (c == 0):
@@ -85,22 +85,22 @@ def comparison(n, c , pi, wi):
 
 
 
+""" 
 n=7
 c = 80
 pi = [70,20,39,37,7,5,10]
 wi = [31,10,20,19,4,3,6]
 comparison(n, c, pi, wi)
+"""
 
 
 
-
-""" 
 n=7
 c=16
 pi = [10, 15, 12, 4, 6, 16, 8]
 wi = [2, 4, 5, 4, 2, 3, 3]
 comparison(n, c, pi, wi)
-"""
+
 
 
 
@@ -120,23 +120,51 @@ def trail():
   for i in range(n):
     P.append(random.randint(1, 41))
     W.append(random.randint(1, 41))
-  return n, c, P, W
+  ratio_times = []
+  maxp_times = []
+  minw_times = []
+  for i in range(10):
+    start = tit.default_timer()
+    PiWi(n, c, P, W)
+    stop = tit.default_timer()
+    ratio_times.append(stop-start)
+    start = tit.default_timer()
+    max_profit(n, c, P, W)
+    stop = tit.default_timer()
+    maxp_times.append(stop-start)
+    start = tit.default_timer()
+    min_weight(n, c, P, W)
+    stop = tit.default_timer()
+    minw_times.append(stop-start)
+  return sum(ratio_times)/10, sum(maxp_times)/10, sum(minw_times)/10
+
+# def play(n):
+#   ratio = []
+#   max_p = []
+#   min_w = []
+#   for i in range(n):
+#     x = trail()
+#     ratio.append(PiWi(x[0], x[1], x[2], x[3])/10)
+#     max_p.append(max_profit(x[0], x[1], x[2], x[3])/10)
+#     min_w.append(min_weight(x[0], x[1], x[2], x[3])/10)
+#   return ratio, max_p, min_w
 
 def play(n):
-  ratio = []
-  max_p = []
-  min_w = []
+  t_p = []
+  t_max= []
+  t_min = []
   for i in range(n):
     x = trail()
-    ratio.append(PiWi(x[0], x[1], x[2], x[3])/10)
-    max_p.append(max_profit(x[0], x[1], x[2], x[3])/10)
-    min_w.append(min_weight(x[0], x[1], x[2], x[3])/10)
-  return ratio, max_p, min_w
+    t_p.append(x[0])
+    t_p.append(x[1])
+    t_p.append(x[2])
+    
+  return t_p, t_max, t_min
 
 
 # Scatter plot
 
-# t = play(20)
+# t = play(30)
 # x=[i for i in range(1, len(t[0])+1)]
 # plt.scatter(x, t[0], marker='^',c="g")
 # plt.scatter(x, t[1], marker='o',c="r")
@@ -145,6 +173,26 @@ def play(n):
 # plt.plot(x, t[1],c="r")
 # plt.plot(x, t[2],c="b")
 # plt.show()
+
+# Scatter plot Times
+z = []
+a = []
+b = []
+for i in range(30):
+  w = trail()
+  z.append(w[0])
+  a.append(w[1])
+  b.append(w[2])
+x=[i for i in range(1, len(z)+1)]
+plt.scatter(x, z, marker='^',c="g")
+plt.scatter(x, a, marker='o',c="r")
+plt.scatter(x, b, marker='*',c="b")
+plt.plot(x, z,c="g")
+plt.plot(x, a,c="r")
+plt.plot(x, b,c="b")
+plt.xlabel("number of exp")
+plt.ylabel("Time")
+plt.show()
 
 
 # Bar plot
